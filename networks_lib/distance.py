@@ -14,6 +14,7 @@ from collections import deque
 def bfs_distance(mat):
     num_vertices = mat.shape[0]    
     res = np.full((num_vertices, num_vertices), np.inf)
+    visited = np.full((num_vertices), False)
     
     # Finish this loop
     for i in range(num_vertices):
