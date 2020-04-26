@@ -58,15 +58,13 @@ def get_components(mat):
     # finish this loop
     while any(available):
         x = []
-        u = np.argmax(available) #Possibly rearrange later
-       #print(u)
+        u = np.argmax(available)
         for i in range(num_vertices):
             if dist_mat[u, i] < np.inf:
                 x.append(i)
             available[u] = False
         if x not in components:
             components.append(x)
-        #print(components)
         
 
     
