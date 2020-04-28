@@ -19,45 +19,56 @@ def edge_counts(vertex, mat):
     num_vertices = mat.shape[0]
     res = np.zeros((num_vertices, num_vertices))
     shortest_path_dist = np.zeros(num_vertices)
+    level = np.zeros(num_vertices)
     shortest_path_number = np.zeros(num_vertices)
+    node_credits = np.zeros(num_vertices)
+    edge_credits = []
     visited = np.full((num_vertices), False)
     Q = deque()
     Q.append([vertex, 0])
     
-    while len(Q) > 0:        #This while loop finds shortest paths, and their lengths
-        x = Q.popleft()
-        #print(x)
+    while len(Q) > 0:                 #Step 1 of Girvan-Newman Algorithm, finds levels of all nodes, which are the lengths of the shortest
+        x = Q.popleft()      
         visited[x[0]] = True
-        #print(x[0])
-        #print(visited)
         shortest_path_dist[x[0]] = x[1]
-        print(shortest_path_dist)
+        level[x[0]] = x[1]
             
         neighbors = np.where(mat[x[0],:]>0)[0]    
-        #print(neighbors)
         for w in neighbors:
             if visited[w] == False:
                 Q.append([w, x[1] + 1])
                 visited[w] = True
-        #print(Q)
-           
-    for i in range(shortest_path_dist) #This for loop finds the number of shortest paths from the original vertex to any other
-        u = np.argmin(shortest_path_dist)
-        shortest_path_number[u] += 1
-        neighbors = np.where(mat[u,:]>0)[0]
-        for w in neighbors:
-            shortest_path_number[w] += 1
+    counter = [] #This counts which nodes have already been checked
 
-    
-
-    
-    for i in range(num_vertices):  #This nested loop confirms that the separate nodes are left out of the equation
+                                                 #Step 2 of Girvan-Newman Algorithm
+    for i in range(num_vertices):                #This for loop finds number of shortest paths that reach each node from the root
+        u = np.argmin(shortest_path_dist) #in each iteration, this one will be different
+        counter.append(u)                 #to see which nodes have already been visited
         for j in range(num_vertices):
-            if i == j:
-                res[i, j] = 0
+            if shortest_path_dist[j] == shortest_path_dist[u] + 1:
+                if j not in counter:
+                    if mat[u, j] == 1:
+                        shortest_path_number[j] += 1
+        shortest_path_dist[u] = np.inf   
+           
+    shortest_path_number[vertex] = 1
     
-    
-    
+    counter.clear()
+    for i in range(num_vertices): #Step 3: using shortest_path_number and level find credit for each edge and node
+        parents = []
+        a = np.argmax(level)
+        counter.append(a)
+        node_credits[a] += 1
+        for j in range(num_vertices): #Find parents and edge connections
+            if (level[j] == level[a] - 1) & (mat[a, j] == 1) & (j not in counter):
+                    parents.append(j)
+        for k in parents:
+            res[a,k] = node_credits[a]/len(parents)
+            res[k,a] = node_credits[a]/len(parents)
+            node_credits[k] += node_credits[a]/len(parents)
+
+        
+        level[a] = -1   
     return res
 
 ## Compute edge betweeness for a graph
