@@ -37,15 +37,13 @@ def girvan_newman(mat, K):
                 
         # remove edge and get components
         # YOU NEED TO FINISH THIS PART
-        
-        # These lines is for testing only, remove in your solution
-        components = []
-        vertices_per_component = math.ceil( num_vertices / K )
-        for i in range(K):
-            start = i * vertices_per_component
-            end = min(start+vertices_per_component, num_vertices-1)
-            components.append(np.arange(end, start, -1))
-            
+        #search through cur_eb to find the maximum value, remove it, then adjust work_mat accordingly
+        a = cur_eb.max()
+        result = np.where(cur_eb == a)
+        cur_eb[result] = 0
+        work_mat[result] = 0 
+        components = get_components(work_mat)
+
     return components_to_assignment(components, num_vertices)
 
 ## Turn list of components to list of assignments
