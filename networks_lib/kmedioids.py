@@ -1,4 +1,6 @@
 import numpy as np
+from random import randint
+from random import seed
 
 ## TODO: Implement this function
 ##
@@ -10,7 +12,16 @@ import numpy as np
 ##   (np.array): initialize by choosing random number of points as medioids
 def random_init(dmat, K):
     num_vertices = dmat.shape[0]
-    medioids = np.arange(10)
+    medioids = np.arange(K)
+    seed()
+    hold_seeds = []
+    for i in range(K):
+        interm = randint(0, num_vertices - 1)
+        while interm in hold_seeds:  #Checking that the vertex is different from others
+            interm = randint(0, num_vertices)
+        hold_seeds.append(interm)
+    medioids = np.array(hold_seeds)    
+                
     return medioids
 
 ## TODO: Implement this function
@@ -21,9 +32,11 @@ def random_init(dmat, K):
 ##
 ## Output:
 ##   - (np.array): assignment of each point to nearest medioid
-def assign(dmat, mediods):
+def assign(dmat, medioids):
     num_vertices = dmat.shape[0]
-    return np.zeros((num_vertices))
+    compare_m = dmat[medioids,:]
+    indices = np.argmin(compare_m, 0)
+    return indices
 
 ## TODO: Implement this function
 ##
@@ -35,7 +48,21 @@ def assign(dmat, mediods):
 ## Output:
 ##   (np.array): indices of selected medioids
 def get_medioids(dmat, assignment, K):
-    mediods = np.zeros((K))
+    mediods = np.zeros((K), dtype = np.int)
+    
+    for i in range(K):
+        index = np.where(assignment == i)
+        index = np.array(index)
+       # print('index:', index)
+        mediod_m = dmat[index, index.transpose()]
+      #  print('mediod_m:', mediod_m)
+        sums = mediod_m.sum(axis = 0)
+      #  print('sums:', sums)
+        ind_in_small = np.argmin(sums)
+      #  print('ind_in_small:', ind_in_small)
+        mediods[i] = index[0, ind_in_small]
+      #  print('mediods:', mediods)
+        
     return mediods
 
 ## TODO: Finish implementing this function
@@ -49,21 +76,22 @@ def get_medioids(dmat, assignment, K):
 ##   - (np.array): assignment of each point to cluster
 def kmedioids(dmat, K, niter=10):
     num_vertices = dmat.shape[0]
-    
+
     # we're checking for convergence by seeing if medioids
     # don't change so set some value to compare to
-    old_mediods = np.full((K), np.inf, dtype=np.int)
+    old_medioids = np.full((K), np.inf, dtype=np.int)
     medioids = random_init(dmat, K)
-    
+
     # this is here to define the variable before the loop
     assignment = np.full((num_vertices), np.inf)
-   
+
     it = 0
-    while np.any(old_mediods != medioids) and it < niter:
+    while np.any(old_medioids != medioids) and it < niter:
         it += 1
         old_medioids = medioids
-        
+
         # finish implementing this section
+        assignment = assign(dmat, medioids)
+        medioids = get_medioids(dmat, assignment, K)
 
     return assignment
-        

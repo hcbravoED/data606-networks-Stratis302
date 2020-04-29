@@ -26,14 +26,14 @@ def edge_counts(vertex, mat):
     visited = np.full((num_vertices), False)
     Q = deque()
     Q.append([vertex, 0])
-    
-    while len(Q) > 0:                 #Step 1 of Girvan-Newman Algorithm, finds levels of all nodes, which are the lengths of the shortest
-        x = Q.popleft()      
+
+    while len(Q) > 0:       #Step 1 of Girvan-Newman Algorithm, finds levels of all nodes, which are the lengths of the shortest paths
+        x = Q.popleft()
         visited[x[0]] = True
         shortest_path_dist[x[0]] = x[1]
         level[x[0]] = x[1]
-            
-        neighbors = np.where(mat[x[0],:]>0)[0]    
+
+        neighbors = np.where(mat[x[0],:]>0)[0]
         for w in neighbors:
             if visited[w] == False:
                 Q.append([w, x[1] + 1])
@@ -49,10 +49,10 @@ def edge_counts(vertex, mat):
                 if j not in counter:
                     if mat[u, j] == 1:
                         shortest_path_number[j] += 1
-        shortest_path_dist[u] = np.inf   
-           
+        shortest_path_dist[u] = np.inf
+
     shortest_path_number[vertex] = 1
-    
+
     counter.clear()
     for i in range(num_vertices): #Step 3: using shortest_path_number and level find credit for each edge and node
         parents = []
@@ -67,14 +67,14 @@ def edge_counts(vertex, mat):
             res[k,a] = node_credits[a]/len(parents)
             node_credits[k] += node_credits[a]/len(parents)
 
-        
-        level[a] = -1   
+
+        level[a] = -1
     return res
 
 ## Compute edge betweeness for a graph
-## 
-## Input: 
-##   - mat (np.array): n-by-n adjacency matrix. 
+##
+## Input:
+##   - mat (np.array): n-by-n adjacency matrix.
 ##
 ## Output:
 ##   (np.array): n-by-n matrix of edge betweenness
