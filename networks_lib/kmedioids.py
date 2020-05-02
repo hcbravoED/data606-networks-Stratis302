@@ -17,7 +17,7 @@ def random_init(dmat, K):
     hold_seeds = []
     for i in range(K):
         interm = randint(0, num_vertices - 1)
-        while interm in hold_seeds:  #Checking that the vertex is different from others
+        while interm in hold_seeds:             #Checking that the vertex is different from others
             interm = randint(0, num_vertices)
         hold_seeds.append(interm)
     medioids = np.array(hold_seeds)    
@@ -48,22 +48,17 @@ def assign(dmat, medioids):
 ## Output:
 ##   (np.array): indices of selected medioids
 def get_medioids(dmat, assignment, K):
-    mediods = np.zeros((K), dtype = np.int)
+    medioids = np.zeros((K), dtype = np.int)
     
     for i in range(K):
         index = np.where(assignment == i)
         index = np.array(index)
-       # print('index:', index)
-        mediod_m = dmat[index, index.transpose()]
-      #  print('mediod_m:', mediod_m)
-        sums = mediod_m.sum(axis = 0)
-      #  print('sums:', sums)
+        medioid_m = dmat[index, index.transpose()]
+        sums = medioid_m.sum(axis = 0)
         ind_in_small = np.argmin(sums)
-      #  print('ind_in_small:', ind_in_small)
-        mediods[i] = index[0, ind_in_small]
-      #  print('mediods:', mediods)
+        medioids[i] = index[0, ind_in_small]
         
-    return mediods
+    return medioids
 
 ## TODO: Finish implementing this function
 ##

@@ -16,27 +16,21 @@ def bfs_distance(mat):
     res = np.full((num_vertices, num_vertices), np.inf)
     
     # Finish this loop
-    for i in range(num_vertices):
+    for i in range(num_vertices):                    
         visited = np.full((num_vertices), False)
         Q = deque()
         Q.append([i, 0])
         
         while len(Q) > 0:
             x = Q.popleft()
-            #print(x)
             visited[x[0]] = True
-            #print(x[0])
-            #print(visited)
             res[i, x[0]] = x[1]
-            #print(res)
             
             neighbors = np.where(mat[x[0],:]>0)[0]    
-            #print(neighbors)
             for w in neighbors:
                 if visited[w] == False:
                     Q.append([w, x[1] + 1])
                     visited[w] = True
-            #print(Q)
     return res
 
 ## TODO: Implement this function

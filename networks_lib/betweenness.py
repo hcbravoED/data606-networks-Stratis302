@@ -27,8 +27,8 @@ def edge_counts(vertex, mat):
     Q = deque()
     Q.append([vertex, 0])
 
-    while len(Q) > 0:       #Step 1 of Girvan-Newman Algorithm, finds levels of all nodes, which are the lengths of the shortest paths
-        x = Q.popleft()
+    while len(Q) > 0:       #Step 1 of Girvan-Newman Algorithm, finds levels of all nodes, which are the lengths of the shortest paths from
+        x = Q.popleft()     #the original vertex to the node
         visited[x[0]] = True
         shortest_path_dist[x[0]] = x[1]
         level[x[0]] = x[1]
@@ -42,9 +42,9 @@ def edge_counts(vertex, mat):
 
                                                  #Step 2 of Girvan-Newman Algorithm
     for i in range(num_vertices):                #This for loop finds number of shortest paths that reach each node from the root
-        u = np.argmin(shortest_path_dist) #in each iteration, this one will be different
-        counter.append(u)                 #to see which nodes have already been visited
-        for j in range(num_vertices):
+        u = np.argmin(shortest_path_dist) 
+        counter.append(u)                 #Counter checks which nodes have already been visited
+        for j in range(num_vertices): #This for loop and nested if statements find the number of shortest paths to each node from the root.
             if shortest_path_dist[j] == shortest_path_dist[u] + 1:
                 if j not in counter:
                     if mat[u, j] == 1:
@@ -56,14 +56,14 @@ def edge_counts(vertex, mat):
     counter.clear()
     for i in range(num_vertices): #Step 3: using shortest_path_number and level find credit for each edge and node
         parents = []
-        a = np.argmax(level)
+        a = np.argmax(level)      
         counter.append(a)
         node_credits[a] += 1
-        for j in range(num_vertices): #Find parents and edge connections
+        for j in range(num_vertices): #This for loop and if statement find parents and edge connections
             if (level[j] == level[a] - 1) & (mat[a, j] == 1) & (j not in counter):
                     parents.append(j)
-        for k in parents:
-            res[a,k] = node_credits[a]/len(parents)
+        for k in parents:                              #This for loop finds the credit for edge connections and for nodes, 
+            res[a,k] = node_credits[a]/len(parents)    #and places credit for edge connections in the result matrix
             res[k,a] = node_credits[a]/len(parents)
             node_credits[k] += node_credits[a]/len(parents)
 
