@@ -55,16 +55,16 @@ def edge_counts(vertex, mat):
 
     counter.clear()
     for i in range(num_vertices): #Step 3: using shortest_path_number and level find credit for each edge and node
-        parents = []
+        parents = []              
         a = np.argmax(level)      
         counter.append(a)
         node_credits[a] += 1
-        for j in range(num_vertices): #This for loop and if statement find parents and edge connections
+        for j in range(num_vertices): #This for loop and if statement find the parents of each node, starting from the bottom level.
             if (level[j] == level[a] - 1) & (mat[a, j] == 1) & (j not in counter):
                     parents.append(j)
         for k in parents:                              #This for loop finds the credit for edge connections and for nodes, 
-            res[a,k] = node_credits[a]/len(parents)    #and places credit for edge connections in the result matrix
-            res[k,a] = node_credits[a]/len(parents)
+            res[a,k] = node_credits[a]/len(parents)    #and places credit for edge connections in the result matrix, and credit for
+            res[k,a] = node_credits[a]/len(parents)    #each node in the array node_credits
             node_credits[k] += node_credits[a]/len(parents)
 
 
